@@ -1,0 +1,48 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="inner">
+    <span class="mono">
+      Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a>
+      &middot; assisted by <span class="ai">GitHub Copilot — Claude Sonnet 4.6</span>
+    </span>
+    <span class="copy">&copy; {year} Diogo Logrado</span>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+  }
+
+  .inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-faint);
+  }
+
+  .mono {
+    font-family: var(--mono);
+  }
+
+  .ai {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  a {
+    color: var(--text-muted);
+  }
+
+  a:hover {
+    color: var(--accent);
+    opacity: 1;
+  }
+</style>

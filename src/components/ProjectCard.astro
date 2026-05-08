@@ -1,0 +1,301 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  tags: string[];
+  url?: string;
+  repo?: string;
+  image?: string;
+  gif?: string;
+}
+
+const { title, description, tags, url, repo, image, gif } = Astro.props;
+const primaryLink = url ?? repo;
+const hasMedia = image || gif;
+---
+
+<article class:list={["card", { "card--media": hasMedia }]}>
+  {/* Stretched link makes the whole card clickable */}
+  {
+    primaryLink && (
+      <a
+        class="card-link"
+        href={primaryLink}
+        target="_blank"
+        rel="noopener"
+        aria-label={title}
+      />
+    )
+  }
+
+  {
+    hasMedia && (
+      <div class="card-bg" aria-hidden="true">
+        {image && <div class="card-bg-static" data-bg={image} />}
+        {gif && <div class="card-bg-gif" data-bg={gif} />}
+        <div class="card-overlay" />
+      </div>
+    )
+  }
+
+  <div class="card-content">
+    <h3>{title}</h3>
+    <p>{description}</p>
+    <ul class="tags">
+      {tags.map((tag) => <li>{tag}</li>)}
+    </ul>
+  </div>
+
+  <div class="card-links">
+    {
+      repo && (
+        <a href={repo} target="_blank" rel="noopener" aria-label="Source code">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+          </svg>
+          Repo
+        </a>
+      )
+    }
+    {
+      url && (
+        <a href={url} target="_blank" rel="noopener" aria-label="Live site">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <>
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </>
+          </svg>
+          Live
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  /* ── Base card ── */
+  .card {
+    position: relative;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    box-shadow: 0 0 0 1px var(--border);
+    height: 256px;
+    transition:
+      box-shadow var(--transition),
+      transform var(--transition);
+  }
+
+  .card:hover {
+    box-shadow: 0 0 0 1px var(--accent);
+    transform: translateY(-3px);
+  }
+
+  /* ── Stretched clickable link ── */
+  .card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: var(--radius);
+  }
+
+  /* card-links and their anchors sit above the stretched link */
+  .card-links {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── Background media (screenshot + gif) ── */
+  .card-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .card-bg-static,
+  .card-bg-gif,
+  .card-overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  .card-bg-static,
+  .card-bg-gif {
+    background-size: 120%;
+    background-position: center center;
+    transition: opacity 0.5s ease;
+  }
+
+  /* Static image: faint at rest, pans in a circle on hover */
+  .card-bg-static {
+    opacity: 1;
+  }
+
+  .card:hover .card-bg-static {
+    opacity: 0.55;
+    animation: pan-circle 12s linear infinite;
+  }
+
+  @keyframes pan-circle {
+    0% {
+      background-position: 60% 50%;
+    }
+    25% {
+      background-position: 50% 40%;
+    }
+    50% {
+      background-position: 40% 50%;
+    }
+    75% {
+      background-position: 50% 60%;
+    }
+    100% {
+      background-position: 60% 50%;
+    }
+  }
+
+  /* GIF: hidden at rest, fades in on hover — no pan */
+  .card-bg-gif {
+    opacity: 0;
+    background-size: cover;
+    background-position: center top;
+  }
+
+  .card:hover .card-bg-gif {
+    opacity: 1;
+  }
+
+  /* If only a gif is provided show it faintly at rest */
+  .card-bg-gif:only-of-type {
+    opacity: 0.12;
+  }
+
+  .card:hover .card-bg-gif:only-of-type {
+    opacity: 1;
+  }
+
+  /* Dark overlay so content stays readable over any image */
+  .card-overlay {
+    background: rgba(247, 250, 248, 0.94);
+    transition: background var(--transition);
+  }
+
+  .card:hover .card-overlay {
+    background: rgba(247, 250, 248, 0.75);
+  }
+
+  /* Content sits above the background layers */
+  .card-content {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+  }
+
+  .tags li {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid #00805733;
+  }
+
+  .card-links {
+    display: flex;
+    gap: 1rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+
+  .card-links a {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    transition: color var(--transition);
+  }
+
+  .card-links a:hover {
+    color: var(--accent);
+    opacity: 1;
+  }
+</style>
+
+<script>
+  function initBgLoader() {
+    document.querySelectorAll<HTMLElement>("[data-bg]").forEach((el) => {
+      const load = () => {
+        const bg = el.dataset.bg;
+        if (bg) el.style.backgroundImage = `url('${bg}')`;
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            load();
+            observer.disconnect();
+          }
+        },
+        { rootMargin: "300px" },
+      );
+      observer.observe(el);
+    });
+  }
+
+  // run now (Astro scripts are modules, DOM is ready)
+  initBgLoader();
+</script>
