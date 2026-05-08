@@ -1,0 +1,366 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { projects } from "../data/index/projects";
+
+const birthDate = new Date("1995-04-23");
+const today = new Date();
+let age = today.getFullYear() - birthDate.getFullYear();
+const m = today.getMonth() - birthDate.getMonth();
+if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+
+const skills = ["TypeScript", "JavaScript", "React", "Node.js", "CSS"];
+---
+
+<Layout>
+  <Header />
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="mono fade-in">Hi, I'm</span>
+      <h1 class="fade-in">Diogo Logrado<span class="dot">.</span></h1>
+      <p class="tagline fade-in">Full-Stack Developer</p>
+      <div class="hero-cta fade-in">
+        <a href="#projects" class="btn-primary">See my work</a>
+      </div>
+    </div>
+    <div class="hero-bg" aria-hidden="true"></div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- About -->
+  <section id="about">
+    <div class="fade-in">
+      <p class="section-label">About</p>
+      <h2 class="section-title">A bit about me</h2>
+    </div>
+    <div class="about-grid fade-in">
+      <div class="about-text">
+        <p>{age} years old, based in Setúbal, Portugal.</p>
+        <p>
+          Full-stack developer with a focus on web applications, comfortable on
+          both the frontend and the backend, and everything in between.
+        </p>
+        <p>
+          Outside of work I'm into gaming, movies, TV shows, travelling and
+          space.
+        </p>
+      </div>
+      <div class="skills-block fade-in-stagger">
+        <p class="skills-label">Stack</p>
+        <ul class="skills">
+          {
+            skills.map((skill) => (
+              <li>
+                <span class="skill-dot" aria-hidden="true">
+                  ▹
+                </span>
+                {skill}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- Projects -->
+  <section id="projects">
+    <div class="fade-in">
+      <p class="section-label">Projects</p>
+      <h2 class="section-title">Projects that I've worked on</h2>
+    </div>
+    <div class="carousel" data-visible="2">
+      <button class="carousel-btn prev" aria-label="Previous projects"
+        >&#8249;</button
+      >
+      <div class="carousel-window">
+        <div class="carousel-track">
+          {
+            projects.map((project) => (
+              <div class="carousel-item">
+                <ProjectCard {...project} />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+      <button class="carousel-btn next" aria-label="Next projects"
+        >&#8250;</button
+      >
+    </div>
+  </section>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 0 1.5rem;
+  }
+
+  .hero-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-top: 5rem;
+  }
+
+  .hero .mono {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--accent);
+  }
+
+  h1 {
+    font-size: clamp(2.8rem, 8vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .dot {
+    color: var(--accent);
+  }
+
+  .tagline {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--text-muted);
+    max-width: 480px;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+
+  /* Ambient glow background */
+  .hero-bg {
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--accent) 18 0%, transparent 70%);
+    pointer-events: none;
+    filter: blur(60px);
+    animation: pulse 8s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--accent);
+    color: #fff;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition:
+      background var(--transition),
+      transform var(--transition);
+  }
+
+  .btn-primary:hover {
+    background: #006645;
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  /* ── About ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 2rem;
+    align-items: start;
+  }
+
+  .about-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .about-text strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .skills-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .skills-label {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+  }
+
+  .skills {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .skills li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .skill-dot {
+    color: var(--accent);
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 640px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  /* ── Projects ── */
+  .carousel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .carousel-window {
+    overflow-x: clip;
+    overflow-y: visible;
+    flex: 1;
+    padding: 4px 4px;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 1.25rem;
+    transition: transform 0.4s ease;
+    margin: 0 -4px;
+    padding: 0 4px;
+  }
+
+  .carousel-item {
+    flex: 0 0 calc(50% - 0.625rem);
+    min-width: 0;
+    height: 256px;
+  }
+
+  .carousel-btn {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      border-color var(--transition),
+      color var(--transition);
+  }
+
+  .carousel-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .carousel-btn.hidden {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  @media (max-width: 580px) {
+    .carousel-item {
+      flex: 0 0 100%;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".carousel").forEach((carousel) => {
+    const track = carousel.querySelector<HTMLElement>(".carousel-track")!;
+    const cards = track.querySelectorAll<HTMLElement>(".carousel-item");
+    const prevBtn = carousel.querySelector<HTMLButtonElement>(".prev")!;
+    const nextBtn = carousel.querySelector<HTMLButtonElement>(".next")!;
+    let current = 0;
+
+    function update() {
+      const gap = parseFloat(getComputedStyle(track).gap) || 20;
+      const cardWidth = cards[0].offsetWidth;
+      const windowWidth =
+        carousel.querySelector<HTMLElement>(".carousel-window")!.offsetWidth;
+      const visibleCount = Math.max(
+        1,
+        Math.round((windowWidth + gap) / (cardWidth + gap)),
+      );
+      const max = Math.max(0, cards.length - visibleCount);
+      current = Math.min(current, max);
+      track.style.transform = `translateX(-${current * (cardWidth + gap)}px)`;
+      prevBtn.classList.toggle("hidden", current === 0);
+      nextBtn.classList.toggle("hidden", current >= max);
+    }
+
+    prevBtn.addEventListener("click", () => {
+      current = Math.max(0, current - 1);
+      update();
+    });
+    nextBtn.addEventListener("click", () => {
+      current++;
+      update();
+    });
+    window.addEventListener("resize", update);
+    update();
+  });
+</script>
